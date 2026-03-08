@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { Phone, MessageCircle } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
+export const dynamic = 'force-dynamic';
+
 interface Product {
   id: string;
   name: string;

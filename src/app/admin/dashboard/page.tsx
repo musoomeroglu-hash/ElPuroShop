@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { Package, LogOut, Plus, Edit, Trash2, Image as ImageIcon, X, Upload } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
+export const dynamic = 'force-dynamic';
+
 interface Product {
     id: string;
     name: string;
