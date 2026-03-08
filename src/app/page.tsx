@@ -144,7 +144,7 @@ export default function Home() {
               <p className="text-gray-500 font-medium">Katalog yükleniyor...</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 animate-[fadeIn_0.5s_ease_forwards]">
+            <div key={activeTab} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 animate-[fadeIn_0.5s_ease_forwards]">
               {filteredProducts.map(product => (
                 <div key={product.id} className="product-card flex flex-col bg-white rounded-2xl overflow-hidden hover:shadow-xl hover:-translate-y-2 transition-all duration-300 border border-gray-100">
                   <div className="card-img h-64 bg-gray-50 flex items-center justify-center relative border-b border-gray-100 overflow-hidden">
@@ -174,7 +174,7 @@ export default function Home() {
               ))}
 
               {filteredProducts.length === 0 && (
-                <div className="col-span-1 sm:col-span-2 lg:col-span-3 text-center py-20 bg-white rounded-2xl border border-gray-100 shadow-sm">
+                <div key={`empty-${activeTab}`} className="col-span-1 sm:col-span-2 lg:col-span-3 text-center py-20 bg-white rounded-2xl border border-gray-100 shadow-sm animate-[fadeIn_0.5s_ease_forwards]">
                   <span className="text-6xl mb-4 block opacity-30">🔍</span>
                   <h3 className="text-xl font-medium text-gray-700">Bu kategori henüz boş</h3>
                   <p className="text-gray-500 mt-2">Daha sonra tekrar kontrol ediniz.</p>
