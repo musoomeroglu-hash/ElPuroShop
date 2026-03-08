@@ -4,7 +4,6 @@ import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Package, LogOut, Plus, Edit, Trash2, Image as ImageIcon, X, Upload } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import Image from 'next/image';
 
 interface Product {
     id: string;
@@ -140,7 +139,7 @@ export default function AdminDashboard() {
                 const fileExt = uploadFile.name.split('.').pop();
                 const fileName = `${Math.random()}.${fileExt}`;
 
-                const { error: uploadError, data: uploadData } = await supabase.storage
+                const { error: uploadError } = await supabase.storage
                     .from('product-images')
                     .upload(fileName, uploadFile);
 
@@ -178,8 +177,12 @@ export default function AdminDashboard() {
 
             setIsModalOpen(false);
             fetchProducts();
-        } catch (err: any) {
-            alert('İşlem başarısız: ' + err.message);
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                alert('İşlem başarısız: ' + err.message);
+            } else {
+                alert('İşlem başarısız: ' + String(err));
+            }
         } finally {
             setSaving(false);
         }
@@ -270,6 +273,7 @@ export default function AdminDashboard() {
                                                     <td className="p-4">
                                                         <div className="w-14 h-14 rounded overflow-hidden bg-gray-100 flex items-center justify-center border border-gray-200">
                                                             {item.image_url ? (
+                                                                /* eslint-disable-next-line @next/next/no-img-element */
                                                                 <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
                                                             ) : (
                                                                 <ImageIcon size={20} className="text-gray-400" />
@@ -399,6 +403,7 @@ export default function AdminDashboard() {
                                         >
                                             {previewUrl ? (
                                                 <>
+                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
                                                     <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
                                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                                         <span className="text-white font-medium drop-shadow-md flex items-center gap-2">

@@ -135,6 +135,7 @@ export default function Home() {
                 <div key={product.id} className="product-card flex flex-col bg-white rounded-2xl overflow-hidden hover:shadow-xl hover:-translate-y-2 transition-all duration-300 border border-gray-100">
                   <div className="card-img h-64 bg-gray-50 flex items-center justify-center relative border-b border-gray-100 overflow-hidden">
                     {product.image_url ? (
+                      /* eslint-disable-next-line @next/next/no-img-element */
                       <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
                     ) : (
                       <div className="text-8xl opacity-40 filter drop-shadow-sm">
