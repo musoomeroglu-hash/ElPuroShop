@@ -1,101 +1,218 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect } from 'react';
+import { Phone, MessageCircle } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
+
+interface Product {
+  id: string;
+  name: string;
+  price: string;
+  description: string;
+  intensity?: 'light' | 'medium' | 'strong' | null;
+  image_url: string;
+  category: string;
+}
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [activeTab, setActiveTab] = useState('puro');
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
+  // Supabase'den ürünleri çek
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        if (data && data.length > 0) {
+          setProducts(data);
+        } else {
+          // Eğer veritabanı boşsa veya bağlantı yoksa boş liste göster
+          setProducts([]);
+        }
+      } catch (err) {
+        console.error("Veri çekme hatası:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  const filteredProducts = products.filter(p => p.category === activeTab);
+
+  const scrollToCatalog = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const el = document.getElementById('catalog');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  return (
+    <>
+      <div className="announcement-bar py-2 px-4 text-center text-sm font-medium sticky top-0 z-50 whitespace-nowrap overflow-x-auto shadow-md">
+        <span>🔥 Yeni stoklar geldi! Sınırlı sayıda üretim premium çeşitler eklendi.</span>
+      </div>
+
+      <nav className="wood-navbar py-4 shadow-lg relative z-40 border-b-2 border-[#c49a45]/20">
+        <div className="container mx-auto px-5">
+          <div className="text-[var(--color-accent)] font-serif text-2xl md:text-3xl font-bold text-center tracking-wide text-shadow-custom">
+            El Puro Shop
+          </div>
+        </div>
+      </nav>
+
+      <section className="relative h-[75vh] min-h-[450px] flex items-center justify-center text-center hero-bg">
+        <div className="absolute inset-0 hero-overlay"></div>
+        <div className="relative z-10 p-5 text-[var(--color-text-light)] max-w-3xl">
+          <h1 className="font-serif text-4xl md:text-5xl lg:text-7xl mb-5 text-[var(--color-accent)] hero-title-shadow leading-tight tracking-wider">
+            Premium Tütün Keyfi
+          </h1>
+          <p className="text-lg md:text-xl mb-10 font-light opacity-90 tracking-wide max-w-xl mx-auto drop-shadow-md">
+            Asaletin ve eşsiz aromaların buluşma noktası. Size özel tütün deneyimini keşfedin.
+          </p>
           <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#catalog"
+            onClick={scrollToCatalog}
+            className="cta-btn inline-block py-4 px-10 text-lg font-bold rounded-[var(--radius-sm)] uppercase tracking-[0.15em]"
           >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
+            Seçkimizi İnceleyin
           </a>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+      </section>
+
+      <section id="catalog" className="py-24 bg-[var(--color-bg-light)]">
+        <div className="container mx-auto px-5 max-w-6xl">
+          <div className="text-center mb-16">
+            <h2 className="section-title font-serif text-4xl md:text-5xl text-[var(--color-primary)] font-bold relative inline-block">
+              Özel Seçki Kataloğumuz
+            </h2>
+          </div>
+
+          <div className="tabs flex overflow-x-auto gap-4 mb-16 pb-4 snap-x snap-mandatory md:justify-center">
+            <button
+              className={`tab-btn flex-none snap-start py-3 px-8 rounded-full text-base font-semibold whitespace-nowrap tracking-wide border-2 ${activeTab === 'puro' ? 'active border-[var(--color-primary)]' : 'border-transparent bg-white shadow-sm'}`}
+              onClick={() => setActiveTab('puro')}
+            >
+              🚬 Puro
+            </button>
+            <button
+              className={`tab-btn flex-none snap-start py-3 px-8 rounded-full text-base font-semibold whitespace-nowrap tracking-wide border-2 ${activeTab === 'mentol' ? 'active border-[var(--color-primary)]' : 'border-transparent bg-white shadow-sm'}`}
+              onClick={() => setActiveTab('mentol')}
+            >
+              🌿 Mentollü Sigara
+            </button>
+            <button
+              className={`tab-btn flex-none snap-start py-3 px-8 rounded-full text-base font-semibold whitespace-nowrap tracking-wide border-2 ${activeTab === 'pipo' ? 'active border-[var(--color-primary)]' : 'border-transparent bg-white shadow-sm'}`}
+              onClick={() => setActiveTab('pipo')}
+            >
+              🪵 Pipo & Nargile
+            </button>
+            <button
+              className={`tab-btn flex-none snap-start py-3 px-8 rounded-full text-base font-semibold whitespace-nowrap tracking-wide border-2 ${activeTab === 'aksesuar' ? 'active border-[var(--color-primary)]' : 'border-transparent bg-white shadow-sm'}`}
+              onClick={() => setActiveTab('aksesuar')}
+            >
+              ✂️ Aksesuarlar
+            </button>
+          </div>
+
+          {loading ? (
+            <div className="py-20 text-center">
+              <div className="inline-block w-12 h-12 border-4 border-gray-200 border-t-[var(--color-accent)] rounded-full animate-spin mb-4"></div>
+              <p className="text-gray-500 font-medium">Katalog yükleniyor...</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 animate-[fadeIn_0.5s_ease_forwards]">
+              {filteredProducts.map(product => (
+                <div key={product.id} className="product-card flex flex-col bg-white rounded-2xl overflow-hidden hover:shadow-xl hover:-translate-y-2 transition-all duration-300 border border-gray-100">
+                  <div className="card-img h-64 bg-gray-50 flex items-center justify-center relative border-b border-gray-100 overflow-hidden">
+                    {product.image_url ? (
+                      <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="text-8xl opacity-40 filter drop-shadow-sm">
+                        {product.category === 'mentol' ? '🌿' : product.category === 'pipo' ? '🪵' : product.category === 'puro' ? '🚬' : '✂️'}
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-7 flex flex-col flex-grow">
+                    <h3 className="font-serif text-2xl text-[var(--color-primary)] mb-3 leading-tight font-bold">
+                      {product.name}
+                    </h3>
+                    <p className="text-2xl font-bold text-[var(--color-secondary)] mb-4">{product.price}</p>
+                    <p className="text-[15px] text-gray-600 mb-6 flex-grow leading-relaxed">{product.description}</p>
+
+                    {product.intensity && (
+                      <span className={`intensity ${product.intensity} px-4 py-1.5 rounded-md text-sm font-bold self-start uppercase tracking-wider`}>
+                        💨 {product.intensity === 'light' ? 'Hafif' : product.intensity === 'medium' ? 'Orta' : 'Güçlü'}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+
+              {filteredProducts.length === 0 && (
+                <div className="col-span-1 sm:col-span-2 lg:col-span-3 text-center py-20 bg-white rounded-2xl border border-gray-100 shadow-sm">
+                  <span className="text-6xl mb-4 block opacity-30">🔍</span>
+                  <h3 className="text-xl font-medium text-gray-700">Bu kategori henüz boş</h3>
+                  <p className="text-gray-500 mt-2">Daha sonra tekrar kontrol ediniz.</p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </section>
+
+      <a
+        href="https://wa.me/905376412174"
+        className="floating-wa fixed bottom-6 right-6 md:bottom-9 md:right-9 w-16 h-16 rounded-full flex items-center justify-center text-white z-50 shadow-2xl"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="WhatsApp"
+      >
+        <MessageCircle size={32} />
+      </a>
+
+      <footer className="wood-footer pt-20 pb-8 text-center relative overflow-hidden">
+        <div className="container mx-auto px-5 relative z-10">
+          <h2 className="font-serif text-4xl md:text-5xl text-[var(--color-accent)] mb-3 tracking-widest font-bold">El Puro Shop</h2>
+          <p className="italic text-lg md:text-xl opacity-90 mb-12 text-gray-300 font-light">Asil Bir Tutku</p>
+
+          <div className="flex flex-col sm:flex-row justify-center gap-5 sm:gap-8 mb-16">
+            <a
+              href="https://wa.me/905376412174"
+              className="contact-link whatsapp inline-flex items-center justify-center px-8 py-4 rounded-xl font-bold text-lg border-2 w-full sm:w-auto shadow-lg"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <MessageCircle className="mr-3" size={24} />
+              WhatsApp ile İletişim
+            </a>
+            <a
+              href="tel:+905376412174"
+              className="contact-link phone inline-flex items-center justify-center px-8 py-4 rounded-xl font-bold text-lg border-2 w-full sm:w-auto shadow-[inset_0_0_20px_rgba(196,154,69,0.1)]"
+            >
+              <Phone className="mr-3" size={24} />
+              0537 641 21 74
+            </a>
+          </div>
+
+          <div className="bg-black/30 backdrop-blur-sm border border-white/5 p-6 rounded-2xl text-[15px] text-gray-400 mb-10 max-w-3xl mx-auto leading-relaxed shadow-inner">
+            <strong className="text-gray-300">Yasal Uyarı:</strong> Bu site sadece bilgilendirme amaçlıdır; internet üzerinden tütün ve tütün ürünleri satışı yapılmamaktadır. Sadece <strong>18 yaş ve üzeri</strong> yasal yetişkinlere yöneliktir. Tütün ürünleri sağlığa zararlıdır.
+          </div>
+
+          <p className="text-sm font-medium opacity-50 pt-8 border-t border-white/10 tracking-wider uppercase">
+            &copy; {new Date().getFullYear()} El Puro Shop. Tüm Hakları Saklıdır.
+          </p>
+        </div>
       </footer>
-    </div>
+    </>
   );
 }

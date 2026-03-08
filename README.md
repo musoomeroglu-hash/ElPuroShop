@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# El Puro Shop - Deployment & Kurulum Rehberi
 
-## Getting Started
+Mevcut HTML uygulamanız **Next.js** kullanılarak tamamen dinamik bir altyapıya geçirildi. Yönetim paneli ve ürün kataloğu hazır!
 
-First, run the development server:
+## 1. Supabase (Veritabanı) Kurulumu
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Ürün fotoğraflarının ve bilgilerinin kalıcı olması için projenin bir veritabanına ihtiyacı var.
+
+1. [Supabase](https://supabase.com/)'e gidin ve ücretsiz bir hesap/proje oluşturun.
+2. Proje ayarlarınızdan **URL** ve **anon key** değerlerini kopyalayın.
+3. Supabase SQL Editörüne (Sol menüdeki SQL Editor sekmesi) gidin ve ana dizinde bulunan **`supabase_setup.sql`** dosyasındaki kodların tümünü yapıştırıp çalıştırın (Run).
+   - Bu işlem `products` tablosunu ve resimler için `product-images` depolama (storage) alanını otomatik oluşturacaktır.
+
+## 2. Çevre Değişkenleri (.env)
+
+Kendi bilgisayarınızda (localhost) test etmek için proje klasöründe `el-puro-shop` içine **`.env.local`** adında bir dosya oluşturun ve içine şunları yazın:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://sizin-proje-id.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=sizin-anon-key-değeriniz
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+> **ÖNEMLİ:** Vercel'e yüklerken (deploy ederken) bu değerleri Vercel ayarlarından "Environment Variables" bölümüne eklemeniz gerekmektedir.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 3. GitHub ve Vercel Üzerinden Yayına Alma
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Visual Studio Code veya Terminal üzerinden projenizi (sadece `el-puro-shop` klasörünü) GitHub'a yükleyin.
+2. [Vercel](https://vercel.com/)'e giriş yapın ve GitHub hesabınızı bağlayın.
+3. Yüklediğiniz depoyu (repository) seçip **Import** deyin.
+4. "Environment Variables" (Çevre Değişkenleri) bölümünde Supabase bilgilerinizi girmeyi unutmayın.
+5. **Deploy** butonuna basın. Vercel her şeyi otomatik ayarlayacaktır.
 
-## Learn More
+## 4. Admin Kullanımı
 
-To learn more about Next.js, take a look at the following resources:
+Site yayına alındığında `siteniz.com/admin` veya yerel testte `localhost:3000/admin` adresinden yönetim paneline girebilirsiniz.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Varsayılan Şifre:** `admin123` *(Güvenlik için `src/app/admin/page.tsx` dosyasından şifrenizi değiştirebilir veya Env değişkenine bağlayabilirsiniz).*
+- Sistemden kategori, fiyat ve puro yoğunluk seviyelerini seçerek dilediğiniz gibi fotoğraf ekleyip çıkarabilirsiniz.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Tebrikler, lüks tütün mağazanız artık dinamik ve yönetilebilir durumda! 💨
