@@ -58,10 +58,22 @@ export default function Home() {
     }
   };
 
+  const formatPrice = (priceStr: string) => {
+    // Sadece sayıları al
+    const numericRegex = priceStr.replace(/[^0-9]/g, '');
+    if (!numericRegex) return priceStr; // Sayı yoksa orijinalini dön
+
+    // Sayıyı numaraya çevir ve formatla (örn: 3500 -> 3.500)
+    const formattedNumber = new Intl.NumberFormat('tr-TR').format(parseInt(numericRegex, 10));
+    return `${formattedNumber} TL`;
+  };
+
   return (
     <>
-      <div className="announcement-bar py-2 px-4 text-center text-sm font-medium sticky top-0 z-50 whitespace-nowrap overflow-x-auto shadow-md">
-        <span>🔥 Yeni stoklar geldi! Sınırlı sayıda üretim premium çeşitler eklendi.</span>
+      <div className="announcement-bar py-2 text-sm font-medium sticky top-0 z-50 shadow-md flex">
+        <div className="announcement-content">
+          <span>🔥 Yeni stoklar geldi! Sınırlı sayıda üretim premium çeşitler eklendi. &nbsp;&nbsp;&nbsp;&nbsp; 🔥 Yeni stoklar geldi! Sınırlı sayıda üretim premium çeşitler eklendi.</span>
+        </div>
       </div>
 
       <nav className="wood-navbar py-4 shadow-lg relative z-40 border-b-2 border-[#c49a45]/20">
@@ -149,7 +161,7 @@ export default function Home() {
                     <h3 className="font-serif text-2xl text-[var(--color-primary)] mb-3 leading-tight font-bold">
                       {product.name}
                     </h3>
-                    <p className="text-2xl font-bold text-[var(--color-secondary)] mb-4">{product.price}</p>
+                    <p className="text-2xl font-bold text-[var(--color-secondary)] mb-4">{formatPrice(product.price)}</p>
                     <p className="text-[15px] text-gray-600 mb-6 flex-grow leading-relaxed">{product.description}</p>
 
                     {product.intensity && (
